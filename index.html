@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semper Fidelis — Przewodnik Chrześcijanina</title>
+  <meta name="description" content="Zbiór modlitw, pieśni i wiedzy chrześcijańskiej w pięciu językach.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&subset=latin,latin-ext,cyrillic&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#fbf9f4">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Semper Fidelis">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+</head>
+<body>
+
+  <!-- Heavenly background layers -->
+  <div class="sky-bg" aria-hidden="true">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+    <div id="particles"></div>
+    <div class="rays"></div>
+  </div>
+
+  <!-- ============ NAVIGATION ============ -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#home" class="brand">
+        <span class="brand-halo">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+            <path d="M12 3v18M7 8h10"/>
+          </svg>
+        </span>
+        <span class="brand-text">Semper <em>Fidelis</em></span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#home" data-i18n="nav_home"></a>
+        <a href="#prayers" data-i18n="nav_prayers"></a>
+        <a href="#songs" data-i18n="nav_songs"></a>
+        <a href="#knowledge" data-i18n="nav_knowledge"></a>
+        <a href="#facts" data-i18n="nav_facts"></a>
+        <a href="#candles" data-i18n="nav_candles"></a>
+      </nav>
+
+      <div class="nav-right">
+        <div class="lang-switch" id="langSwitch">
+          <button class="lang-current" id="langCurrent" aria-haspopup="listbox" aria-label="Language">
+            <span id="langCurrentLabel">PL</span>
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <ul class="lang-menu" id="langMenu" role="listbox">
+            <li role="option" data-lang="pl"><span class="lang-flag">🇵🇱</span> Polski</li>
+            <li role="option" data-lang="en"><span class="lang-flag">🇬🇧</span> English</li>
+            <li role="option" data-lang="ru"><span class="lang-flag">🇷🇺</span> Русский</li>
+            <li role="option" data-lang="de"><span class="lang-flag">🇩🇪</span> Deutsch</li>
+            <li role="option" data-lang="fr"><span class="lang-flag">🇫🇷</span> Français</li>
+          </ul>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="home">
+      <div class="hero-content reveal">
+        <div class="hero-angel" aria-hidden="true">
+          <svg viewBox="0 0 120 72" width="120" height="72" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- halo -->
+            <ellipse cx="60" cy="13" rx="13" ry="4.5"/>
+            <!-- right wing -->
+            <path d="M67 47c9-25 29-36 45-31-3 4-6 7-10 9"/>
+            <path d="M67 47c10-17 25-23 37-22-2 4-5 7-8 9"/>
+            <path d="M67 47c9-11 20-14 29-12-2 4-4 6-7 8"/>
+            <path d="M67 47c7-6 14-7 20-6-2 4-4 6-7 8"/>
+            <path d="M67 47c5-2 9-2 13 0-2 3-4 5-7 6"/>
+            <!-- left wing -->
+            <path d="M53 47C44 22 24 11 8 16c3 4 6 7 10 9"/>
+            <path d="M53 47C43 30 28 24 16 25c2 4 5 7 8 9"/>
+            <path d="M53 47c-9-11-20-14-29-12 2 4 4 6 7 8"/>
+            <path d="M53 47c-7-6-14-7-20-6 2 4 4 6 7 8"/>
+            <path d="M53 47c-5-2-9-2-13 0 2 3 4 5 7 6"/>
+          </svg>
+        </div>
+        <p class="hero-kicker" data-i18n="hero_kicker"></p>
+        <h1 class="hero-title" data-i18n="hero_title"></h1>
+        <p class="hero-sub" data-i18n="hero_sub"></p>
+        <div class="hero-actions">
+          <a href="#prayers" class="btn btn-gold" data-i18n="hero_cta1"></a>
+          <a href="#candles" class="btn btn-ghost" data-i18n="hero_cta2"></a>
+        </div>
+      </div>
+
+      <div class="verse-card reveal" id="verseCard">
+        <div class="verse-ornament">✦</div>
+        <p class="verse-label" data-i18n="verse_label"></p>
+        <blockquote class="verse-text" id="verseText"></blockquote>
+        <cite class="verse-ref" id="verseRef"></cite>
+      </div>
+    </section>
+
+    <!-- ============ PRAYERS ============ -->
+    <section class="section" id="prayers">
+      <div class="section-head reveal">
+        <span class="section-ornament">✦ ✦ ✦</span>
+        <h2 data-i18n="prayers_title"></h2>
+        <p class="section-sub" data-i18n="prayers_sub"></p>
+      </div>
+      <div class="prayer-list" id="prayerList"></div>
+    </section>
+
+    <!-- ============ SONGS ============ -->
+    <section class="section section-alt" id="songs">
+      <div class="section-head reveal">
+        <span class="section-ornament">♪ ✦ ♪</span>
+        <h2 data-i18n="songs_title"></h2>
+        <p class="section-sub" data-i18n="songs_sub"></p>
+      </div>
+      <div class="song-grid" id="songGrid"></div>
+    </section>
+
+    <!-- ============ KNOWLEDGE ============ -->
+    <section class="section" id="knowledge">
+      <div class="section-head reveal">
+        <span class="section-ornament">✦ ✦ ✦</span>
+        <h2 data-i18n="knowledge_title"></h2>
+        <p class="section-sub" data-i18n="knowledge_sub"></p>
+      </div>
+      <div class="tabs reveal" id="knowledgeTabs"></div>
+      <div class="tab-panel reveal" id="knowledgePanel"></div>
+    </section>
+
+    <!-- ============ FACTS ============ -->
+    <section class="section section-alt" id="facts">
+      <div class="section-head reveal">
+        <span class="section-ornament">✦ ✦ ✦</span>
+        <h2 data-i18n="facts_title"></h2>
+        <p class="section-sub" data-i18n="facts_sub"></p>
+      </div>
+      <div class="facts-grid" id="factsGrid"></div>
+    </section>
+
+    <!-- ============ CANDLES ============ -->
+    <section class="section" id="candles">
+      <div class="section-head reveal">
+        <span class="section-ornament">🕯</span>
+        <h2 data-i18n="candles_title"></h2>
+        <p class="section-sub" data-i18n="candles_sub"></p>
+      </div>
+      <div class="candle-chapel reveal">
+        <div class="candle-row" id="candleRow"></div>
+        <form class="candle-form" id="candleForm">
+          <input type="text" id="candleIntention" maxlength="60" data-i18n-placeholder="candles_placeholder">
+          <button type="submit" class="btn btn-gold" data-i18n="candles_btn"></button>
+        </form>
+        <p class="candle-note" data-i18n="candles_note"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-verse" data-i18n="footer_verse"></p>
+      <p class="footer-note">Semper Fidelis · <span data-i18n="footer_note"></span></p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
