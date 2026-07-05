@@ -341,6 +341,54 @@ h1, h2, h3, .serif { font-family: var(--serif); }
 }
 .verse-ref { font-size: 0.85rem; color: var(--ink-soft); font-style: normal; letter-spacing: 0.06em; }
 
+/* ============ TEXT-TO-SPEECH BUTTONS ============ */
+.tts-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--gold);
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, color 0.25s;
+}
+.tts-btn:hover { border-color: var(--gold-bright); box-shadow: 0 0 14px rgba(217, 168, 63, 0.35); }
+.tts-btn.speaking {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+  color: #fffdf5;
+  border-color: transparent;
+  animation: ttsPulse 1.3s ease-in-out infinite;
+}
+@keyframes ttsPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 168, 63, 0.5); }
+  50% { box-shadow: 0 0 0 9px rgba(217, 168, 63, 0); }
+}
+.tts-pill {
+  width: auto;
+  grid-auto-flow: column;
+  gap: 8px;
+  padding: 0 18px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+}
+.tts-pill:hover { color: var(--gold); }
+.tts-pill.speaking { color: #fffdf5; }
+.tts-pill svg { color: var(--gold); }
+.tts-pill.speaking svg { color: #fffdf5; }
+
+.verse-card .tts-btn { position: absolute; top: 16px; right: 16px; }
+.prayer-tools { padding: 2px 28px 12px 82px; }
+.song-top { display: flex; align-items: flex-start; gap: 12px; }
+.song-top .song-title { flex: 1; }
+.song-top .tts-btn { position: relative; z-index: 1; }
+.k-card .tts-btn, .fact-card .tts-btn { margin-top: 14px; margin-left: auto; }
+
 /* ============ SECTIONS ============ */
 .section {
   padding: 96px 24px;
@@ -679,6 +727,7 @@ h1, h2, h3, .serif { font-family: var(--serif); }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 900px) {
+  .prayer-tools { padding-left: 28px; }
   .nav-links {
     position: fixed;
     top: 70px;

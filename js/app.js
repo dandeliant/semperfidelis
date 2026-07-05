@@ -16,6 +16,98 @@
 
   let activeTab = 0;
 
+  /* ---------- text-to-speech (browser speech synthesis; Google voices on Chrome/Android) ---------- */
+
+  const TTS_LANG = { pl: "pl-PL", en: "en-GB", ru: "ru-RU", de: "de-DE", fr: "fr-FR" };
+  const TTS_ICON =
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
+
+  let ttsVoices = [];
+  if ("speechSynthesis" in window) {
+    const loadVoices = () => { ttsVoices = speechSynthesis.getVoices(); };
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function pickVoice(bcp) {
+    const prefix = bcp.slice(0, 2);
+    const cands = ttsVoices.filter((v) => v.lang.replace("_", "-").toLowerCase().indexOf(prefix) === 0);
+    return (
+      cands.find((v) => /google/i.test(v.name) && v.lang.replace("_", "-") === bcp) ||
+      cands.find((v) => /google/i.test(v.name)) ||
+      cands.find((v) => v.lang.replace("_", "-") === bcp) ||
+      cands[0] || null
+    );
+  }
+
+  // split long texts into sentence-sized chunks (Chrome cuts off long utterances)
+  function chunkText(text) {
+    const parts = text.split(/\n+/).reduce((acc, line) => acc.concat(line.split(/(?<=[.!?;:])\s+/)), []);
+    const chunks = [];
+    let cur = "";
+    parts.forEach((p) => {
+      p = p.trim();
+      if (!p) return;
+      if (cur && (cur + " " + p).length > 180) { chunks.push(cur); cur = p; }
+      else cur = cur ? cur + " " + p : p;
+    });
+    if (cur) chunks.push(cur);
+    return chunks;
+  }
+
+  let speakingBtn = null;
+
+  function stopSpeech() {
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    if (speakingBtn) {
+      speakingBtn.classList.remove("speaking");
+      speakingBtn.title = t().ui.tts_listen;
+      speakingBtn.setAttribute("aria-label", t().ui.tts_listen);
+      speakingBtn = null;
+    }
+  }
+
+  function speak(text, btn) {
+    if (btn === speakingBtn) { stopSpeech(); return; }
+    stopSpeech();
+    const bcp = TTS_LANG[lang];
+    const chunks = chunkText(text);
+    if (!chunks.length) return;
+    speakingBtn = btn;
+    btn.classList.add("speaking");
+    btn.title = t().ui.tts_stop;
+    btn.setAttribute("aria-label", t().ui.tts_stop);
+    const voice = pickVoice(bcp);
+    chunks.forEach((c, i) => {
+      const u = new SpeechSynthesisUtterance(c);
+      u.lang = bcp;
+      if (voice) u.voice = voice;
+      u.rate = 0.95;
+      if (i === chunks.length - 1) {
+        u.onend = () => { if (speakingBtn === btn) stopSpeech(); };
+      }
+      u.onerror = () => { if (speakingBtn === btn) stopSpeech(); };
+      speechSynthesis.speak(u);
+    });
+  }
+
+  function makeTtsBtn(text, pill) {
+    if (!("speechSynthesis" in window)) return null;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tts-btn" + (pill ? " tts-pill" : "");
+    b.innerHTML = TTS_ICON + (pill ? "<span></span>" : "");
+    if (pill) b.querySelector("span").textContent = t().ui.tts_listen;
+    b.title = t().ui.tts_listen;
+    b.setAttribute("aria-label", t().ui.tts_listen);
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      speak(text, b);
+    });
+    return b;
+  }
+
   /* ---------- rendering ---------- */
 
   function t() { return I18N[lang]; }
@@ -40,6 +132,11 @@
     const v = verses[dayIndex];
     $("#verseText").textContent = "„" + v.t + "”";
     $("#verseRef").textContent = v.r;
+    const card = $("#verseCard");
+    const old = card.querySelector(".tts-btn");
+    if (old) old.remove();
+    const btn = makeTtsBtn(v.t + " — " + v.r, false);
+    if (btn) card.appendChild(btn);
   }
 
   function renderPrayers() {
@@ -55,9 +152,11 @@
           '<svg class="prayer-chev" width="16" height="16" viewBox="0 0 16 16">' +
             '<path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' +
         "</button>" +
-        '<div class="prayer-body"><p class="prayer-text"></p></div>';
+        '<div class="prayer-body"><div class="prayer-tools"></div><p class="prayer-text"></p></div>';
       item.querySelector(".prayer-name").textContent = p.name;
       item.querySelector(".prayer-text").textContent = p.text;
+      const ttsBtn = makeTtsBtn(p.name + ". " + p.text, true);
+      if (ttsBtn) item.querySelector(".prayer-tools").appendChild(ttsBtn);
 
       const head = item.querySelector(".prayer-head");
       const body = item.querySelector(".prayer-body");
@@ -91,12 +190,14 @@
       const card = document.createElement("article");
       card.className = "song-card reveal";
       card.innerHTML =
-        '<h3 class="song-title"></h3>' +
+        '<div class="song-top"><h3 class="song-title"></h3></div>' +
         '<p class="song-meta"></p>' +
         '<p class="song-lyrics"></p>';
       card.querySelector(".song-title").textContent = s.title;
       card.querySelector(".song-meta").textContent = s.meta;
       card.querySelector(".song-lyrics").textContent = s.lyrics;
+      const ttsBtn = makeTtsBtn(s.title + ". " + s.lyrics, false);
+      if (ttsBtn) card.querySelector(".song-top").appendChild(ttsBtn);
       grid.appendChild(card);
     });
   }
@@ -120,6 +221,7 @@
     });
 
     function renderKnowledgePanel() {
+      stopSpeech();
       const k = t().knowledge[activeTab];
       panel.innerHTML = "";
       panel.classList.remove("lang-fade");
@@ -140,6 +242,8 @@
         card.querySelector(".k-card-icon").textContent = c.icon;
         card.querySelector("h4").textContent = c.title;
         card.querySelector("p").textContent = c.text;
+        const ttsBtn = makeTtsBtn(c.title + ". " + c.text, false);
+        if (ttsBtn) card.appendChild(ttsBtn);
         grid.appendChild(card);
       });
       panel.appendChild(grid);
@@ -159,6 +263,8 @@
       card.querySelector(".fact-icon").textContent = f.icon;
       card.querySelector("h4").textContent = f.title;
       card.querySelector("p").textContent = f.text;
+      const ttsBtn = makeTtsBtn(f.title + ". " + f.text, false);
+      if (ttsBtn) card.appendChild(ttsBtn);
       grid.appendChild(card);
     });
   }
@@ -294,6 +400,7 @@
   /* ---------- boot ---------- */
 
   function renderAll() {
+    stopSpeech();
     renderUI();
     renderVerse();
     renderPrayers();
