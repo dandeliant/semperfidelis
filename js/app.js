@@ -974,6 +974,106 @@
   });
   $("#rosaryReset").addEventListener("click", () => { roState.idx = 0; roSave(); renderRosary(); });
 
+  /* ---------- interactive Divine Mercy chaplet ---------- */
+
+  const CHAPLET_STEPS = (() => {
+    const s = [{ k: "sign" }, { k: "our" }, { k: "hail" }, { k: "creed" }];
+    for (let d = 0; d < 5; d++) {
+      s.push({ k: "eternal", d });
+      for (let n = 1; n <= 10; n++) s.push({ k: "mercy", d, n });
+    }
+    for (let n = 1; n <= 3; n++) s.push({ k: "holy", n });
+    s.push({ k: "blood" });
+    return s;
+  })();
+
+  let chState;
+  try { chState = JSON.parse(localStorage.getItem("sf-chaplet")); } catch (e) { chState = null; }
+  if (!chState || typeof chState.idx !== "number") chState = { idx: 0 };
+  chState.idx = Math.min(Math.max(chState.idx, 0), CHAPLET_STEPS.length - 1);
+  function chSave() { localStorage.setItem("sf-chaplet", JSON.stringify(chState)); }
+
+  function chapletBeadClass(st) {
+    if (st.k === "sign") return "ro-cross";
+    if (st.k === "eternal") return "ro-large";
+    if (st.k === "holy") return "ro-chain";
+    if (st.k === "blood") return "ro-medal";
+    return "";
+  }
+
+  function renderChapletPanel() {
+    const st = CHAPLET_STEPS[chState.idx];
+    const u = t().ui;
+    const C = t().chaplet;
+    const P = t().prayers;
+    let title = "", mystery = "", body = "";
+    switch (st.k) {
+      case "sign":
+        title = u.ch_sign;
+        body = C.sign;
+        break;
+      case "our":
+        title = P[0].name;
+        body = P[0].text;
+        break;
+      case "hail":
+        title = P[1].name;
+        body = P[1].text;
+        break;
+      case "creed":
+        title = P[5].name;
+        body = P[5].text;
+        break;
+      case "eternal":
+        title = u.ch_eternal;
+        mystery = u.ro_decade + " " + (st.d + 1);
+        body = C.eternal;
+        break;
+      case "mercy":
+        title = u.ch_mercy + " (" + st.n + "/10)";
+        mystery = u.ro_decade + " " + (st.d + 1);
+        body = C.mercy;
+        break;
+      case "holy":
+        title = u.ch_holy + " (" + st.n + "/3)";
+        body = C.holy;
+        break;
+      case "blood":
+        title = u.ro_final;
+        body = C.blood + "\n\n" + u.ch_done;
+        break;
+    }
+    $("#chapletStage").textContent = title;
+    $("#chapletMystery").textContent = mystery;
+    $("#chapletText").textContent = body;
+    $("#chapletPrev").disabled = chState.idx === 0;
+    $("#chapletNext").disabled = chState.idx === CHAPLET_STEPS.length - 1;
+  }
+
+  function renderChaplet() {
+    const wrap = $("#chapletBeads");
+    wrap.innerHTML = "";
+    CHAPLET_STEPS.forEach((st, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = ("ro-bead " + chapletBeadClass(st)).trim();
+      if (i < chState.idx) b.classList.add("done");
+      if (i === chState.idx) b.classList.add("current");
+      if (st.k === "sign") b.textContent = "✝";
+      b.addEventListener("click", () => { chState.idx = i; chSave(); renderChaplet(); });
+      wrap.appendChild(b);
+    });
+    renderChapletPanel();
+  }
+
+  $("#chapletNext").addEventListener("click", () => {
+    if (chState.idx < CHAPLET_STEPS.length - 1) { chState.idx++; chSave(); renderChaplet(); }
+  });
+  $("#chapletPrev").addEventListener("click", () => {
+    if (chState.idx > 0) { chState.idx--; chSave(); renderChaplet(); }
+  });
+  $("#chapletReset").addEventListener("click", () => { chState.idx = 0; chSave(); renderChaplet(); });
+
   /* ---------- prayer reminders ---------- */
 
   const REMINDERS = [
@@ -1133,6 +1233,7 @@
     renderFacts();
     renderCandles();
     renderRosary();
+    renderChaplet();
     renderReminders();
     // newly created .reveal elements inside already-visible viewport
     requestAnimationFrame(() => {
