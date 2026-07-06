@@ -1,5 +1,5 @@
 /* Semper Fidelis — service worker: app shell precache + offline support */
-const CACHE = "semper-fidelis-v8";
+const CACHE = "semper-fidelis-v9";
 
 const PRECACHE = [
   "./",
