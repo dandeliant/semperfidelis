@@ -44,6 +44,7 @@
       <nav class="nav-links" id="navLinks">
         <a href="#home" data-i18n="nav_home"></a>
         <a href="#prayers" data-i18n="nav_prayers"></a>
+        <a href="#rosary" data-i18n="nav_rosary"></a>
         <a href="#songs" data-i18n="nav_songs"></a>
         <a href="#knowledge" data-i18n="nav_knowledge"></a>
         <a href="#facts" data-i18n="nav_facts"></a>
@@ -51,7 +52,17 @@
       </nav>
 
       <div class="nav-right">
-        <button class="edit-toggle" id="editToggle" aria-label="Edit content">
+        <button class="icon-btn" id="searchBtn" aria-label="Search">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="themeToggle" aria-label="Night mode">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.6 6.6 0 0 0 21 12.8z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="editToggle" aria-label="Edit content">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>
           </svg>
@@ -123,6 +134,32 @@
       <div class="prayer-list" id="prayerList"></div>
     </section>
 
+    <!-- ============ INTERACTIVE ROSARY ============ -->
+    <section class="section" id="rosary">
+      <div class="section-head reveal">
+        <span class="section-ornament">📿</span>
+        <h2 data-i18n="ro_title"></h2>
+        <p class="section-sub" data-i18n="ro_sub"></p>
+      </div>
+      <div class="rosary-widget reveal">
+        <div class="rosary-sets-row">
+          <span class="rosary-sets-label" data-i18n="ro_choose"></span>
+          <div class="rosary-sets" id="rosarySets"></div>
+        </div>
+        <div class="rosary-panel">
+          <p class="rosary-stage" id="rosaryStage"></p>
+          <p class="rosary-mystery" id="rosaryMystery"></p>
+          <p class="rosary-text" id="rosaryText"></p>
+        </div>
+        <div class="rosary-beads" id="rosaryBeads"></div>
+        <div class="rosary-controls">
+          <button type="button" class="btn btn-ghost btn-sm" id="rosaryPrev" data-i18n="ro_prev"></button>
+          <button type="button" class="btn btn-gold" id="rosaryNext" data-i18n="ro_next"></button>
+          <button type="button" class="btn btn-ghost btn-sm" id="rosaryReset" data-i18n="ro_reset"></button>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ SONGS ============ -->
     <section class="section section-alt" id="songs">
       <div class="section-head reveal">
@@ -169,6 +206,12 @@
         </form>
         <p class="candle-note" data-i18n="candles_note"></p>
       </div>
+
+      <div class="reminders-card reveal">
+        <h3 class="rem-title"><span>🔔</span> <span data-i18n="rem_title"></span></h3>
+        <p class="rem-sub" data-i18n="rem_sub"></p>
+        <div id="remList"></div>
+      </div>
     </section>
   </main>
 
@@ -179,6 +222,14 @@
       <p class="footer-note">Semper Fidelis · <span data-i18n="footer_note"></span></p>
     </div>
   </footer>
+
+  <!-- ============ SEARCH ============ -->
+  <div class="modal-backdrop" id="searchOverlay" hidden>
+    <div class="modal search-modal">
+      <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" autocomplete="off">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
 
   <!-- ============ CONTENT EDITOR ============ -->
   <div class="modal-backdrop" id="editorModal" hidden>

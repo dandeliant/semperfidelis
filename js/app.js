@@ -115,9 +115,17 @@
           out._ref = { kind: "added", id: a.id };
           return out;
         });
-      return { tab: k.tab, intro: k.intro, cards: cards.concat(added) };
+      return { tab: k.tab, intro: k.intro, daily: !!k.daily, cards: cards.concat(added) };
     });
   }
+
+  /* ---------- favourites ---------- */
+
+  let favs;
+  try { favs = new Set(JSON.parse(localStorage.getItem("sf-favs")) || []); }
+  catch (e) { favs = new Set(); }
+  const favKey = (ref) => (ref.kind === "base" ? "b" + ref.idx : "a" + ref.id);
+  function saveFavs() { localStorage.setItem("sf-favs", JSON.stringify(Array.from(favs))); }
 
   const PENCIL_ICON =
     '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -258,6 +266,12 @@
     const et = $("#editToggle");
     et.title = t().ui.ed_mode;
     et.setAttribute("aria-label", t().ui.ed_mode);
+    const sb = $("#searchBtn");
+    sb.title = t().ui.search_label;
+    sb.setAttribute("aria-label", t().ui.search_label);
+    const th = $("#themeToggle");
+    th.title = t().ui.theme_toggle;
+    th.setAttribute("aria-label", t().ui.theme_toggle);
   }
 
   function renderVerse() {
@@ -273,10 +287,13 @@
     if (btn) card.appendChild(btn);
   }
 
-  function renderPrayers() {
+  function renderPrayers(autoOpen) {
     const list = $("#prayerList");
     list.innerHTML = "";
-    effSimple("prayers").forEach((p, i) => {
+    const items = effSimple("prayers");
+    // favourites float to the top, otherwise keep original order (stable sort)
+    items.sort((a, b) => (favs.has(favKey(b._ref)) ? 1 : 0) - (favs.has(favKey(a._ref)) ? 1 : 0));
+    items.forEach((p, i) => {
       const item = document.createElement("div");
       item.className = "prayer-item reveal";
       item.innerHTML =
@@ -289,8 +306,23 @@
         '<div class="prayer-body"><div class="prayer-tools"></div><p class="prayer-text"></p></div>';
       item.querySelector(".prayer-name").textContent = p.name;
       item.querySelector(".prayer-text").textContent = p.text;
+      item.dataset.key = favKey(p._ref);
       const ttsBtn = makeTtsBtn(p.name + ". " + p.text, true);
       if (ttsBtn) item.querySelector(".prayer-tools").appendChild(ttsBtn);
+      const isFav = favs.has(favKey(p._ref));
+      const favBtn = document.createElement("button");
+      favBtn.type = "button";
+      favBtn.className = "tts-btn tts-pill fav-pill" + (isFav ? " fav-on" : "");
+      favBtn.innerHTML = '<span class="fav-star">★</span>';
+      favBtn.title = isFav ? t().ui.fav_remove : t().ui.fav_add;
+      favBtn.setAttribute("aria-label", favBtn.title);
+      favBtn.addEventListener("click", () => {
+        const k = favKey(p._ref);
+        if (favs.has(k)) favs.delete(k); else favs.add(k);
+        saveFavs();
+        renderPrayers(false);
+      });
+      item.querySelector(".prayer-tools").appendChild(favBtn);
       if (editMode) item.appendChild(editBadge("prayers", p._ref));
 
       const head = item.querySelector(".prayer-head");
@@ -310,7 +342,7 @@
         }
       });
       list.appendChild(item);
-      if (i === 0) {
+      if (i === 0 && autoOpen !== false) {
         item.classList.add("open");
         head.setAttribute("aria-expanded", "true");
         requestAnimationFrame(() => { body.style.maxHeight = body.scrollHeight + "px"; });
@@ -373,10 +405,23 @@
 
       const grid = document.createElement("div");
       grid.className = "k-grid";
-      k.cards.forEach((c) => {
+      let cards = k.cards;
+      if (k.daily && cards.length) {
+        // rotate so a different saint leads each day — the "saint of the day"
+        const off = Math.floor(Date.now() / 86400000) % cards.length;
+        cards = cards.slice(off).concat(cards.slice(0, off));
+      }
+      cards.forEach((c, ci) => {
         const card = document.createElement("div");
         card.className = "k-card";
-        card.innerHTML = '<div class="k-card-icon"></div><h4></h4><p></p>';
+        if (k.daily && ci === 0) {
+          card.classList.add("patron");
+          const badge = document.createElement("span");
+          badge.className = "patron-badge";
+          badge.textContent = "✨ " + t().ui.k_patron;
+          card.appendChild(badge);
+        }
+        card.insertAdjacentHTML("beforeend", '<div class="k-card-icon"></div><h4></h4><p></p>');
         card.querySelector(".k-card-icon").textContent = c.icon;
         card.querySelector("h4").textContent = c.title;
         card.querySelector("p").textContent = c.text;
@@ -693,6 +738,313 @@
     r.readAsText(f);
   });
 
+  /* ---------- night mode ---------- */
+
+  const savedTheme = localStorage.getItem("sf-theme");
+  if (savedTheme === "dark" || (!savedTheme && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    document.body.classList.add("dark");
+  }
+  function updateThemeColor() {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = document.body.classList.contains("dark") ? "#14172a" : "#fbf9f4";
+  }
+  $("#themeToggle").addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("sf-theme", document.body.classList.contains("dark") ? "dark" : "light");
+    updateThemeColor();
+  });
+  updateThemeColor();
+
+  /* ---------- search ---------- */
+
+  function openSearch() {
+    $("#searchOverlay").hidden = false;
+    const inp = $("#searchInput");
+    inp.value = "";
+    $("#searchResults").innerHTML = "";
+    setTimeout(() => inp.focus(), 60);
+  }
+  function closeSearch() { $("#searchOverlay").hidden = true; }
+
+  $("#searchBtn").addEventListener("click", openSearch);
+  $("#searchOverlay").addEventListener("click", (e) => {
+    if (e.target === $("#searchOverlay")) closeSearch();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closeSearch(); closeModal(); }
+  });
+
+  function snippet(text, q) {
+    const idx = text.toLowerCase().indexOf(q);
+    const start = Math.max(0, idx - 34);
+    let s = text.slice(start, start + 110).replace(/\n/g, " ");
+    if (start > 0) s = "…" + s;
+    if (start + 110 < text.length) s += "…";
+    return s;
+  }
+
+  function runSearch() {
+    const q = $("#searchInput").value.trim().toLowerCase();
+    const out = $("#searchResults");
+    out.innerHTML = "";
+    if (q.length < 2) return;
+    const results = [];
+    const add = (cat, title, text, go) => {
+      const hay = (title + "\n" + text).toLowerCase();
+      if (hay.indexOf(q) === -1) return;
+      results.push({ cat, title, text, go, rank: title.toLowerCase().indexOf(q) !== -1 ? 0 : 1 });
+    };
+    effSimple("prayers").forEach((p) => add(t().ui.nav_prayers, p.name, p.text, () => goPrayer(p._ref)));
+    effSimple("songs").forEach((s, i) => add(t().ui.nav_songs, s.title, (s.meta || "") + "\n" + s.lyrics, () => goCard("#songGrid .song-card", i)));
+    effKnowledge().forEach((k, ti) => k.cards.forEach((c) => add(t().ui.nav_knowledge + " · " + k.tab, c.title, c.text, () => goKnowledge(ti, c.title))));
+    effSimple("facts").forEach((f, i) => add(t().ui.nav_facts, f.title, f.text, () => goCard("#factsGrid .fact-card", i)));
+    results.sort((a, b) => a.rank - b.rank);
+    if (!results.length) {
+      out.innerHTML = '<p class="search-empty"></p>';
+      out.querySelector(".search-empty").textContent = t().ui.search_empty;
+      return;
+    }
+    results.slice(0, 20).forEach((r) => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "search-item";
+      item.innerHTML = '<div class="search-cat"></div><div class="search-title"></div><div class="search-snip"></div>';
+      item.querySelector(".search-cat").textContent = r.cat;
+      item.querySelector(".search-title").textContent = r.title;
+      item.querySelector(".search-snip").textContent = snippet(r.text, q);
+      item.addEventListener("click", r.go);
+      out.appendChild(item);
+    });
+  }
+  $("#searchInput").addEventListener("input", runSearch);
+
+  function goPrayer(ref) {
+    closeSearch();
+    $("#prayers").scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      const el = $('#prayerList .prayer-item[data-key="' + favKey(ref) + '"]');
+      if (!el) return;
+      if (!el.classList.contains("open")) el.querySelector(".prayer-head").click();
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("flash");
+      setTimeout(() => el.classList.remove("flash"), 2000);
+    }, 400);
+  }
+  function goCard(sel, i) {
+    closeSearch();
+    const el = $$(sel)[i];
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("flash");
+    setTimeout(() => el.classList.remove("flash"), 2000);
+  }
+  function goKnowledge(ti, title) {
+    closeSearch();
+    activeTab = ti;
+    renderKnowledge();
+    $("#knowledge").scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      const card = Array.from($$("#knowledgePanel .k-card h4")).find((h) => h.textContent === title);
+      if (card) {
+        const el = card.closest(".k-card");
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("flash");
+        setTimeout(() => el.classList.remove("flash"), 2000);
+      }
+    }, 400);
+  }
+
+  /* ---------- interactive rosary ---------- */
+
+  const RO_DEFAULT_BY_DAY = [3, 0, 2, 3, 1, 2, 0]; // Sun..Sat -> set index
+  const ROSARY_STEPS = (() => {
+    const s = [{ k: "sign" }, { k: "our" }, { k: "hail3", n: 1 }, { k: "hail3", n: 2 }, { k: "hail3", n: 3 }, { k: "glory" }];
+    for (let d = 0; d < 5; d++) {
+      s.push({ k: "announce", d });
+      for (let n = 1; n <= 10; n++) s.push({ k: "hail", d, n });
+      s.push({ k: "fatima", d });
+    }
+    s.push({ k: "final" });
+    return s;
+  })();
+
+  let roState;
+  try { roState = JSON.parse(localStorage.getItem("sf-rosary")); } catch (e) { roState = null; }
+  if (!roState || typeof roState.idx !== "number" || typeof roState.set !== "number") {
+    roState = { set: RO_DEFAULT_BY_DAY[new Date().getDay()], idx: 0 };
+  }
+  roState.idx = Math.min(Math.max(roState.idx, 0), ROSARY_STEPS.length - 1);
+  roState.set = Math.min(Math.max(roState.set, 0), 3);
+  function roSave() { localStorage.setItem("sf-rosary", JSON.stringify(roState)); }
+
+  function beadClass(st) {
+    if (st.k === "sign") return "ro-cross";
+    if (st.k === "our" || st.k === "announce") return "ro-large";
+    if (st.k === "glory" || st.k === "fatima") return "ro-chain";
+    if (st.k === "final") return "ro-medal";
+    return "";
+  }
+
+  function renderRosaryPanel() {
+    const st = ROSARY_STEPS[roState.idx];
+    const u = t().ui;
+    const R = t().rosary;
+    const P = t().prayers;
+    const set = R.sets[roState.set];
+    let title = "", mystery = "", body = "";
+    switch (st.k) {
+      case "sign":
+        title = u.ro_sign;
+        body = P[5].text;
+        break;
+      case "our":
+        title = P[0].name;
+        body = P[0].text;
+        break;
+      case "hail3":
+        title = P[1].name + " (" + st.n + "/3) — " + u.ro_intent3;
+        body = P[1].text;
+        break;
+      case "glory":
+        title = P[2].name;
+        body = P[2].text;
+        break;
+      case "announce":
+        title = u.ro_mystery + " " + (st.d + 1) + ": " + set.m[st.d];
+        mystery = set.name + " · " + P[0].name;
+        body = P[0].text;
+        break;
+      case "hail":
+        title = P[1].name + " (" + st.n + "/10)";
+        mystery = u.ro_decade + " " + (st.d + 1) + " — " + set.m[st.d];
+        body = P[1].text;
+        break;
+      case "fatima":
+        title = u.ro_fatima;
+        mystery = u.ro_decade + " " + (st.d + 1) + " — " + set.m[st.d];
+        body = P[2].text + "\n\n" + R.fatima;
+        break;
+      case "final":
+        title = u.ro_final + " — " + P[8].name;
+        body = P[8].text + "\n\n" + u.ro_done;
+        break;
+    }
+    $("#rosaryStage").textContent = title;
+    $("#rosaryMystery").textContent = mystery;
+    $("#rosaryText").textContent = body;
+    $("#rosaryPrev").disabled = roState.idx === 0;
+    $("#rosaryNext").disabled = roState.idx === ROSARY_STEPS.length - 1;
+  }
+
+  function renderRosary() {
+    const setsEl = $("#rosarySets");
+    setsEl.innerHTML = "";
+    t().rosary.sets.forEach((s, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "ro-set" + (i === roState.set ? " active" : "");
+      b.innerHTML = "<span></span><small></small>";
+      b.querySelector("span").textContent = s.name;
+      b.querySelector("small").textContent = s.days;
+      b.addEventListener("click", () => {
+        if (roState.set !== i) { roState.set = i; roState.idx = 0; roSave(); renderRosary(); }
+      });
+      setsEl.appendChild(b);
+    });
+    const wrap = $("#rosaryBeads");
+    wrap.innerHTML = "";
+    ROSARY_STEPS.forEach((st, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = ("ro-bead " + beadClass(st)).trim();
+      if (i < roState.idx) b.classList.add("done");
+      if (i === roState.idx) b.classList.add("current");
+      if (st.k === "sign") b.textContent = "✝";
+      b.addEventListener("click", () => { roState.idx = i; roSave(); renderRosary(); });
+      wrap.appendChild(b);
+    });
+    renderRosaryPanel();
+  }
+
+  $("#rosaryNext").addEventListener("click", () => {
+    if (roState.idx < ROSARY_STEPS.length - 1) { roState.idx++; roSave(); renderRosary(); }
+  });
+  $("#rosaryPrev").addEventListener("click", () => {
+    if (roState.idx > 0) { roState.idx--; roSave(); renderRosary(); }
+  });
+  $("#rosaryReset").addEventListener("click", () => { roState.idx = 0; roSave(); renderRosary(); });
+
+  /* ---------- prayer reminders ---------- */
+
+  const REMINDERS = [
+    { key: "angelus", time: "12:00", pIdx: 9 },
+    { key: "chaplet", time: "15:00", pIdx: 7 },
+  ];
+  let remState;
+  try { remState = JSON.parse(localStorage.getItem("sf-reminders")) || {}; } catch (e) { remState = {}; }
+  function remSave() { localStorage.setItem("sf-reminders", JSON.stringify(remState)); }
+
+  function ensureNotifyPermission() {
+    if (!("Notification" in window)) return Promise.resolve(false);
+    if (Notification.permission === "granted") return Promise.resolve(true);
+    if (Notification.permission === "denied") return Promise.resolve(false);
+    return Notification.requestPermission().then((p) => p === "granted");
+  }
+
+  function renderReminders() {
+    const box = $("#remList");
+    box.innerHTML = "";
+    REMINDERS.forEach((r) => {
+      const row = document.createElement("div");
+      row.className = "rem-row";
+      row.innerHTML = '<span class="rem-label"></span><label class="switch"><input type="checkbox"><span class="track"></span></label>';
+      row.querySelector(".rem-label").textContent = I18N[lang].prayers[r.pIdx].name + " — " + r.time;
+      const cb = row.querySelector("input");
+      cb.checked = !!remState[r.key];
+      cb.addEventListener("change", () => {
+        if (cb.checked) {
+          ensureNotifyPermission().then((ok) => {
+            if (!ok) { cb.checked = false; toast(t().ui.rem_denied); return; }
+            remState[r.key] = true;
+            remSave();
+            toast(t().ui.rem_enabled + " · " + r.time);
+          });
+        } else {
+          remState[r.key] = false;
+          remSave();
+        }
+      });
+      box.appendChild(row);
+    });
+  }
+
+  function fireReminder(r) {
+    const title = "🔔 " + I18N[lang].prayers[r.pIdx].name;
+    const body = t().ui.rem_body;
+    if ("Notification" in window && Notification.permission === "granted") {
+      navigator.serviceWorker.getRegistration()
+        .then((reg) => {
+          if (reg) reg.showNotification(title, { body: body, icon: "icons/icon-192.png", badge: "icons/icon-192.png" });
+          else new Notification(title, { body: body, icon: "icons/icon-192.png" });
+        })
+        .catch(() => { try { new Notification(title, { body: body }); } catch (e) { /* unsupported */ } });
+    }
+    toast(title + " · " + body);
+  }
+
+  setInterval(() => {
+    const now = new Date();
+    const hm = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+    const today = now.toDateString();
+    REMINDERS.forEach((r) => {
+      if (remState[r.key] && hm === r.time && remState["last_" + r.key] !== today) {
+        remState["last_" + r.key] = today;
+        remSave();
+        fireReminder(r);
+      }
+    });
+  }, 30000);
+
   /* ---------- language switching ---------- */
 
   function setLang(next) {
@@ -780,6 +1132,8 @@
     renderKnowledge();
     renderFacts();
     renderCandles();
+    renderRosary();
+    renderReminders();
     // newly created .reveal elements inside already-visible viewport
     requestAnimationFrame(() => {
       observeReveals();
