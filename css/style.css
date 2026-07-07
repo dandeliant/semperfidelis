@@ -1319,3 +1319,18 @@ body.dark .fav-pill.fav-on .fav-star { color: var(--gold-bright); }
   .section { padding: 72px 18px; }
   .verse-card { padding: 32px 24px 26px; }
 }
+
+/* compact top bar so the burger always fits on phones */
+@media (max-width: 640px) {
+  .nav-inner { padding: 10px 12px; gap: 8px; }
+  .nav-right { gap: 6px; }
+  .icon-btn { width: 34px; height: 34px; }
+  .lang-current { padding: 7px 10px; font-size: 0.78rem; gap: 5px; }
+  .brand { gap: 7px; }
+  .brand-halo { width: 36px; height: 36px; }
+  .brand-text { font-size: 1.05rem; }
+  .nav-links { top: 60px; }
+}
+@media (max-width: 440px) {
+  .brand-text { display: none; }
+}
