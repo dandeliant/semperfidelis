@@ -906,8 +906,9 @@
         body = P[1].text;
         break;
       case "glory":
-        title = P[2].name;
-        body = P[2].text;
+        // on the single bead: Glory Be + the Fatima prayer, before announcing the first mystery
+        title = u.ro_fatima;
+        body = P[2].text + "\n\n" + R.fatima;
         break;
       case "announce":
         title = u.ro_mystery + " " + (st.d + 1) + ": " + set.m[st.d];
