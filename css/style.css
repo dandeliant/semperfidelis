@@ -631,6 +631,9 @@ h1, h2, h3, .serif { font-family: var(--serif); }
 }
 .k-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .k-card-icon { font-size: 1.6rem; margin-bottom: 10px; }
+.k-link { display: block; text-decoration: none; color: inherit; cursor: pointer; }
+.k-link h4::after { content: " ↗"; color: var(--gold); font-size: 0.85em; }
+.k-link:hover { border-color: var(--gold-bright); }
 .k-card h4 { font-family: var(--serif); font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; }
 .k-card p { font-size: 0.92rem; color: var(--ink-soft); }
 

@@ -184,6 +184,13 @@ const I18N = {
         { icon: "🙌", title: "Św. Ojciec Pio (1887–1968)", text: "Włoski kapucyn, stygmatyk, spowiadał godzinami. Założył szpital „Dom Ulgi w Cierpieniu”. Mawiał: „Módl się, ufaj i nie martw się”." },
         { icon: "🔎", title: "Św. Antoni z Padwy (1195–1231)", text: "Genialny kaznodzieja i doktor Kościoła. Patron rzeczy zagubionych — od stuleci proszą go o pomoc wszyscy, którzy czegoś szukają." },
       ]},
+      { tab: "Linki", intro: "Polecane strony o modlitwie różańcowej i koronce — do dalszej lektury. Wszystkie linki otwierają się w nowej karcie.", cards: [
+        { icon: "🌍", title: "Różaniec w różnych językach", text: "Teksty modlitw różańcowych po łacinie, angielsku, niemiecku, francusku i w innych językach — na serwisie Modlitwy24.", url: "https://modlitwy24.pl/rozaniec-w-roznych-jezykach/" },
+        { icon: "📖", title: "Jak odmawiać różaniec", text: "Praktyczny przewodnik krok po kroku: układ paciorków, kolejność modlitw i tajemnice na każdy dzień tygodnia.", url: "https://modlitwy24.pl/jak-odmawiac-rozaniec/" },
+        { icon: "❤️", title: "Koronka do Miłosierdzia Bożego", text: "Pełny tekst koronki wraz ze wskazówkami, jak ją odmawiać na zwykłym różańcu.", url: "https://modlitwy24.pl/koronka-do-milosierdzia-bozego/" },
+        { icon: "🌹", title: "Nowenna pompejańska", text: "Jak odmawiać 54-dniową nowennę różańcową, zwaną „nowenną nie do odparcia”.", url: "https://modlitwy24.pl/nowenna-pompejanska/" },
+        { icon: "📜", title: "Historia nowenny pompejańskiej", text: "Niezwykłe początki nowenny: historia Bartola Longo i łaski związane z Pompejami.", url: "https://modlitwy24.pl/historia-nowenny-pompejanskiej/" },
+      ]},
     ],
     facts: [
       { icon: "📖", title: "Bestseller wszech czasów", text: "Biblia to najczęściej wydawana książka świata — przetłumaczona w całości lub częściowo na ponad 3600 języków." },
@@ -377,6 +384,13 @@ const I18N = {
         { icon: "🌹", title: "St. Thérèse of Lisieux (1873–1897)", text: "A Carmelite nun and author of the “little way” — holiness in everyday small things. She died at 24; Doctor of the Church and patroness of the missions." },
         { icon: "🙌", title: "St. Padre Pio (1887–1968)", text: "An Italian Capuchin and stigmatic who heard confessions for hours. He founded the “Home for the Relief of Suffering” hospital. He used to say: “Pray, hope and don't worry”." },
         { icon: "🔎", title: "St. Anthony of Padua (1195–1231)", text: "A brilliant preacher and Doctor of the Church. Patron of lost things — for centuries people have asked his help in finding them." },
+      ]},
+      { tab: "Links", intro: "Recommended pages about the Rosary and the Divine Mercy Chaplet for further reading (content in Polish). All links open in a new tab.", cards: [
+        { icon: "🌍", title: "The Rosary in various languages", text: "Rosary prayer texts in Latin, English, German, French and other languages — on the Modlitwy24 website.", url: "https://modlitwy24.pl/rozaniec-w-roznych-jezykach/" },
+        { icon: "📖", title: "How to pray the Rosary", text: "A practical step-by-step guide: the layout of the beads, the order of prayers and the mysteries for each day of the week.", url: "https://modlitwy24.pl/jak-odmawiac-rozaniec/" },
+        { icon: "❤️", title: "The Divine Mercy Chaplet", text: "The full text of the chaplet with guidance on how to pray it on ordinary rosary beads.", url: "https://modlitwy24.pl/koronka-do-milosierdzia-bozego/" },
+        { icon: "🌹", title: "The Pompeii Novena", text: "How to pray the 54-day rosary novena known as the “irresistible novena”.", url: "https://modlitwy24.pl/nowenna-pompejanska/" },
+        { icon: "📜", title: "History of the Pompeii Novena", text: "The remarkable origins of the novena: the story of Bartolo Longo and the graces connected with Pompeii.", url: "https://modlitwy24.pl/historia-nowenny-pompejanskiej/" },
       ]},
     ],
     facts: [
@@ -572,6 +586,13 @@ const I18N = {
         { icon: "🙌", title: "Св. Падре Пио (1887–1968)", text: "Итальянский капуцин, стигматик, часами принимал исповеди. Основал больницу «Дом облегчения страданий». Говорил: «Молись, надейся и не волнуйся»." },
         { icon: "🔎", title: "Св. Антоний Падуанский (1195–1231)", text: "Гениальный проповедник, учитель Церкви. Покровитель потерянных вещей — веками люди просят его помощи в поисках." },
       ]},
+      { tab: "Ссылки", intro: "Рекомендуемые страницы о Розарии и Венчике Божьему Милосердию для дальнейшего чтения (материалы на польском языке). Все ссылки открываются в новой вкладке.", cards: [
+        { icon: "🌍", title: "Розарий на разных языках", text: "Тексты молитв Розария на латыни, английском, немецком, французском и других языках — на сайте Modlitwy24.", url: "https://modlitwy24.pl/rozaniec-w-roznych-jezykach/" },
+        { icon: "📖", title: "Как читать Розарий", text: "Практическое пошаговое руководство: расположение бусин, порядок молитв и тайны на каждый день недели.", url: "https://modlitwy24.pl/jak-odmawiac-rozaniec/" },
+        { icon: "❤️", title: "Венчик Божьему Милосердию", text: "Полный текст венчика с указаниями, как читать его на обычных чётках.", url: "https://modlitwy24.pl/koronka-do-milosierdzia-bozego/" },
+        { icon: "🌹", title: "Помпейская новенна", text: "Как читать 54-дневную новенну Розария, называемую «непреодолимой новенной».", url: "https://modlitwy24.pl/nowenna-pompejanska/" },
+        { icon: "📜", title: "История помпейской новенны", text: "Удивительное происхождение новенны: история Бартоло Лонго и благодати, связанные с Помпеями.", url: "https://modlitwy24.pl/historia-nowenny-pompejanskiej/" },
+      ]},
     ],
     facts: [
       { icon: "📖", title: "Бестселлер всех времён", text: "Библия — самая издаваемая книга в мире, переведённая полностью или частично более чем на 3600 языков." },
@@ -766,6 +787,13 @@ const I18N = {
         { icon: "🙌", title: "Hl. Pater Pio (1887–1968)", text: "Italienischer Kapuziner und Stigmatisierter, der stundenlang Beichten hörte. Er gründete das Krankenhaus „Haus zur Linderung des Leidens“. Sein Rat: „Bete, hoffe und sorge dich nicht“." },
         { icon: "🔎", title: "Hl. Antonius von Padua (1195–1231)", text: "Genialer Prediger und Kirchenlehrer. Patron der verlorenen Dinge — seit Jahrhunderten bitten ihn Suchende um Hilfe." },
       ]},
+      { tab: "Links", intro: "Empfohlene Seiten über den Rosenkranz und den Barmherzigkeitsrosenkranz zum Weiterlesen (Inhalte auf Polnisch). Alle Links öffnen sich in einem neuen Tab.", cards: [
+        { icon: "🌍", title: "Der Rosenkranz in verschiedenen Sprachen", text: "Rosenkranzgebete auf Latein, Englisch, Deutsch, Französisch und in weiteren Sprachen — auf der Website Modlitwy24.", url: "https://modlitwy24.pl/rozaniec-w-roznych-jezykach/" },
+        { icon: "📖", title: "Wie man den Rosenkranz betet", text: "Ein praktischer Schritt-für-Schritt-Leitfaden: Anordnung der Perlen, Reihenfolge der Gebete und die Geheimnisse für jeden Wochentag.", url: "https://modlitwy24.pl/jak-odmawiac-rozaniec/" },
+        { icon: "❤️", title: "Der Barmherzigkeitsrosenkranz", text: "Der vollständige Text mit Hinweisen, wie man ihn an einem gewöhnlichen Rosenkranz betet.", url: "https://modlitwy24.pl/koronka-do-milosierdzia-bozego/" },
+        { icon: "🌹", title: "Die Pompeji-Novene", text: "Wie man die 54-tägige Rosenkranz-Novene betet, die „unwiderstehliche Novene“ genannt wird.", url: "https://modlitwy24.pl/nowenna-pompejanska/" },
+        { icon: "📜", title: "Geschichte der Pompeji-Novene", text: "Die außergewöhnlichen Anfänge der Novene: die Geschichte von Bartolo Longo und die mit Pompeji verbundenen Gnaden.", url: "https://modlitwy24.pl/historia-nowenny-pompejanskiej/" },
+      ]},
     ],
     facts: [
       { icon: "📖", title: "Bestseller aller Zeiten", text: "Die Bibel ist das meistverlegte Buch der Welt — ganz oder teilweise in mehr als 3600 Sprachen übersetzt." },
@@ -959,6 +987,13 @@ const I18N = {
         { icon: "🌹", title: "Ste Thérèse de Lisieux (1873–1897)", text: "Carmélite, maîtresse de la « petite voie » — la sainteté dans les petites choses du quotidien. Morte à 24 ans ; docteur de l'Église et patronne des missions." },
         { icon: "🙌", title: "St Padre Pio (1887–1968)", text: "Capucin italien, stigmatisé, il confessait des heures durant. Fondateur de l'hôpital « Maison du soulagement de la souffrance ». Il disait : « Prie, espère et ne t'inquiète pas »." },
         { icon: "🔎", title: "St Antoine de Padoue (1195–1231)", text: "Prédicateur de génie, docteur de l'Église. Patron des objets perdus — depuis des siècles, on invoque son aide pour retrouver ce qui est égaré." },
+      ]},
+      { tab: "Liens", intro: "Pages recommandées sur le Rosaire et le Chapelet de la Miséricorde pour aller plus loin (contenus en polonais). Les liens s'ouvrent dans un nouvel onglet.", cards: [
+        { icon: "🌍", title: "Le Rosaire en différentes langues", text: "Les textes des prières du Rosaire en latin, anglais, allemand, français et d'autres langues — sur le site Modlitwy24.", url: "https://modlitwy24.pl/rozaniec-w-roznych-jezykach/" },
+        { icon: "📖", title: "Comment prier le Rosaire", text: "Un guide pratique pas à pas : la disposition des grains, l'ordre des prières et les mystères pour chaque jour de la semaine.", url: "https://modlitwy24.pl/jak-odmawiac-rozaniec/" },
+        { icon: "❤️", title: "Le Chapelet de la Miséricorde Divine", text: "Le texte complet du chapelet avec des conseils pour le prier sur un chapelet ordinaire.", url: "https://modlitwy24.pl/koronka-do-milosierdzia-bozego/" },
+        { icon: "🌹", title: "La Neuvaine de Pompéi", text: "Comment prier la neuvaine du Rosaire de 54 jours, appelée « neuvaine irrésistible ».", url: "https://modlitwy24.pl/nowenna-pompejanska/" },
+        { icon: "📜", title: "Histoire de la Neuvaine de Pompéi", text: "Les origines extraordinaires de la neuvaine : l'histoire de Bartolo Longo et les grâces liées à Pompéi.", url: "https://modlitwy24.pl/historia-nowenny-pompejanskiej/" },
       ]},
     ],
     facts: [

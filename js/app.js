@@ -412,8 +412,14 @@
         cards = cards.slice(off).concat(cards.slice(0, off));
       }
       cards.forEach((c, ci) => {
-        const card = document.createElement("div");
+        const card = document.createElement(c.url ? "a" : "div");
         card.className = "k-card";
+        if (c.url) {
+          card.href = c.url;
+          card.target = "_blank";
+          card.rel = "noopener";
+          card.classList.add("k-link");
+        }
         if (k.daily && ci === 0) {
           card.classList.add("patron");
           const badge = document.createElement("span");
